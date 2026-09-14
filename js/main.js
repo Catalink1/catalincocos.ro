@@ -465,9 +465,20 @@ document.addEventListener("click", (e) => {
 // ── Init ──
 document.addEventListener("DOMContentLoaded", () => {
   checkCookieConsent();
-  // curăță „/index.html" și „#..." rămase în bara de adrese
-  if (location.pathname.endsWith("/index.html")) {
-    history.replaceState(null, "", "/" + location.search);
+  // curăță „/index.html" și parametrii de tracking (fbclid, gclid, utm_*) din bara de adrese
+  const trackingKeys = ["fbclid", "gclid", "gclsrc", "igshid", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+  const params = new URLSearchParams(location.search);
+  let paramsChanged = false;
+  trackingKeys.forEach((k) => {
+    if (params.has(k)) {
+      params.delete(k);
+      paramsChanged = true;
+    }
+  });
+  const cleanPath = location.pathname.endsWith("/index.html") ? "/" : location.pathname;
+  if (paramsChanged || cleanPath !== location.pathname) {
+    const qs = params.toString();
+    history.replaceState(null, "", cleanPath + (qs ? "?" + qs : ""));
   }
   const hash = window.location.hash.replace("#", "");
   const validPages = ["home", "about", "portfolio", "services", "poetry", "phone", "contact"];

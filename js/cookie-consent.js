@@ -10,6 +10,21 @@
   var yEls = document.querySelectorAll(".js-year");
   for (var i = 0; i < yEls.length; i++) yEls[i].textContent = y;
 
+  /* Curăță parametrii de tracking (fbclid, gclid, utm_*) din bara de adrese */
+  var trackingKeys = ["fbclid", "gclid", "gclsrc", "igshid", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+  var params = new URLSearchParams(location.search);
+  var paramsChanged = false;
+  trackingKeys.forEach(function (k) {
+    if (params.has(k)) {
+      params.delete(k);
+      paramsChanged = true;
+    }
+  });
+  if (paramsChanged) {
+    var qs = params.toString();
+    history.replaceState(null, "", location.pathname + (qs ? "?" + qs : ""));
+  }
+
   var KEY = "cookieConsent";
 
   var stored = null;
