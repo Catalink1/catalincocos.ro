@@ -57,7 +57,7 @@ const DENY = [
   "admin/config.sample.php",
   "admin/TEMPLATE-articol.md", // working template for drafts, not part of the site
 ];
-const DENY_PREFIX = [".claude/", ".vscode/", "node_modules/", "articole/"]; // articole/ = drafts, published via admin import
+const DENY_PREFIX = [".claude/", ".vscode/", "node_modules/", "articole/", "tools/"]; // articole/ = drafts, published via admin import; tools/ = local scripts
 
 /* ── config ── */
 function loadConfig() {

@@ -10,6 +10,7 @@
     "sharp": "^0.34.5"
   },
   "devDependencies": {
+    "google-auth-library": "^11.2.0",
     "puppeteer-core": "^25.10.0"
   }
 }
