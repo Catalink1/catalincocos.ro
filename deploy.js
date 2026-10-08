@@ -55,8 +55,9 @@ const DENY = [
   "Lumina.jpg",
   "admin/config.php",       // lives only on the server, holds real secrets
   "admin/config.sample.php",
+  "admin/TEMPLATE-articol.md", // working template for drafts, not part of the site
 ];
-const DENY_PREFIX = [".claude/", ".vscode/", "node_modules/"];
+const DENY_PREFIX = [".claude/", ".vscode/", "node_modules/", "articole/"]; // articole/ = drafts, published via admin import
 
 /* ── config ── */
 function loadConfig() {

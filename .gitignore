@@ -1,4 +1,6 @@
 node_modules/
+despre-mine/
+jurnal-postari-linkedin.md
 compress.js
 build.js
 admin/config.php
@@ -6,3 +8,4 @@ admin/config.php
 .deploy-manifest.json
 .claude/php-server.log
 .claude/php-server-err.log
+notite/

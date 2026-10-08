@@ -12,6 +12,16 @@
 </IfModule>
 # END cPanel-generated php ini directives, do not edit
 
+# ── http:// și www. → https://catalincocos.ro (o singură adresă) ─
+# .well-known/ rămâne neatins, ca reînnoirea SSL (AutoSSL) să meargă.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_URI} !^/\.well-known/
+  RewriteCond %{HTTPS} off [OR]
+  RewriteCond %{HTTP_HOST} ^www\. [NC]
+  RewriteRule ^ https://catalincocos.ro%{REQUEST_URI} [R=301,L]
+</IfModule>
+
 # ── /index.html → / (canonical, o singură adresă) ──────────────
 <IfModule mod_rewrite.c>
   RewriteEngine On
