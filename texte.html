@@ -6,6 +6,8 @@
     <!-- Google Analytics (se activează doar după accept cookies) -->
     <script>
       window.dataLayer = window.dataLayer || [];
+      // adresa de intrare, cu utm_*/fbclid, păstrată înainte ca main.js/cookie-consent.js să curețe bara de adrese
+      var gaLandingUrl = location.href;
       function gtag() {
         dataLayer.push(arguments);
       }
@@ -19,7 +21,7 @@
         s.src = "https://www.googletagmanager.com/gtag/js?id=G-BHKM4XF83R";
         document.head.appendChild(s);
         gtag("consent", "update", { analytics_storage: "granted" });
-        gtag("config", "G-BHKM4XF83R");
+        gtag("config", "G-BHKM4XF83R", { page_location: gaLandingUrl });
       }
       if (localStorage.getItem("cookieConsent") === "accepted") loadGA();
     </script>
