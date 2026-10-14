@@ -967,6 +967,10 @@ button { font-family: var(--font-sans); cursor: pointer; }
   font-size: 0.85rem; color: var(--dark);
   display: flex; align-items: center; gap: 0.75rem;
 }
+/* blocul lat (Administrare site-uri) și întrebările frecvente ocupă tot rândul grilei */
+.svc-block--wide, .svc-grid > .faq-wrap { grid-column: 1 / -1; }
+.svc-block--wide > p { max-width: 720px; }
+.svc-block--wide ul { display: grid; grid-template-columns: 1fr 1fr; column-gap: 3rem; }
 .services-cta {
   text-align: center;
   padding: 3rem 4rem 6rem;
@@ -1459,6 +1463,7 @@ footer {
   .portfolio-head { padding: calc(var(--nav-h) + 2rem) 2rem 1rem; }
   .masonry { padding: 1rem 2rem 4rem; columns: 2; column-gap: 10px; }
   .svc-grid { grid-template-columns: 1fr; margin: 0 2rem 2rem; }
+  .svc-block--wide ul { grid-template-columns: 1fr; }
   .services-intro { padding: 3rem 2rem 2rem; }
   .services-cta { padding: 2rem 2rem 4rem; }
   .p-item { grid-template-columns: 1fr; }

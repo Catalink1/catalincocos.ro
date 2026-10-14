@@ -29,6 +29,14 @@
   RewriteRule ^ / [R=301,L]
 </IfModule>
 
+# ── /articol.html → articol.php (intern, fără redirect) ─────────
+# articol.php pune titlul, descrierea și imaginea articolului direct
+# în <head>, ca Facebook/LinkedIn să le vadă fără JavaScript.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^articol\.html$ articol.php [L]
+</IfModule>
+
 # ── Cache policy ────────────────────────────────────────────────
 # HTML + JSON data: always revalidate, so content updates are seen
 # immediately (no stale pages after a deploy or an admin edit).
