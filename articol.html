@@ -39,7 +39,7 @@
     <meta property="og:description" id="ogDesc" content="" />
     <meta property="og:type" content="article" />
     <meta property="og:image" content="https://catalincocos.ro/img/eu.jpg" />
-    <link rel="stylesheet" href="css/style.css?v=bfcb7f17" />
+    <link rel="stylesheet" href="css/style.css?v=2239af9e" />
     <style>
       .art-wrap {
         padding-top: var(--nav-h);
@@ -198,11 +198,55 @@
       }
       .art-highlight p:last-child { margin-bottom: 0; }
       .art-highlight strong { color: var(--accent); font-weight: 600; }
+      /* Photo gallery (fotoreportaj) */
+      .art-gallery {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin: 2.5rem 0;
+      }
+      .art-gallery a {
+        display: block;
+        overflow: hidden;
+        border-radius: 10px;
+        aspect-ratio: 1 / 1;
+        background: var(--off-white);
+      }
+      .art-gallery img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        filter: grayscale(20%);
+        transition: transform 0.5s ease, filter 0.3s;
+      }
+      .art-gallery a:hover img { transform: scale(1.05); filter: grayscale(0%); }
+      /* Comparison tables */
+      .art-body table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2.5rem 0;
+        font-size: 0.95rem;
+      }
+      .art-body th, .art-body td {
+        padding: 0.9rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--cream);
+      }
+      .art-body th {
+        font-family: var(--font-serif);
+        font-weight: 600;
+        color: var(--dark);
+        background: var(--off-white);
+      }
+      .art-body td { color: var(--dark); }
       @media (max-width: 768px) {
         .art-header { padding: 4rem 1.5rem 2rem; }
         .art-body { padding: 2rem 1.5rem 4rem; font-size: 1rem; }
         .stat-cards { grid-template-columns: 1fr; }
         .art-highlight { padding: 1.5rem; }
+        .art-gallery { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .art-body th, .art-body td { padding: 0.6rem 0.5rem; font-size: 0.85rem; }
       }
     </style>
   </head>
@@ -268,9 +312,11 @@
       // Nav
       document.getElementById("hamburger").addEventListener("click", () => {
         document.getElementById("mobileNav").classList.add("open");
+        document.body.classList.add("menu-open");
       });
       document.getElementById("mobileClose").addEventListener("click", () => {
         document.getElementById("mobileNav").classList.remove("open");
+        document.body.classList.remove("menu-open");
       });
 
       function formatData(str) {
@@ -324,6 +370,29 @@
               ${heroHtml}
               <div class="art-body">${a.continut}</div>
             </article>`;
+
+          // Schema.org structured data — ajută atât Google, cât și motoarele
+          // generative (ChatGPT, Perplexity, AI Overviews) să citeze corect
+          // autorul, data și subiectul articolului.
+          const prevSchema = document.getElementById("articleSchema");
+          if (prevSchema) prevSchema.remove();
+          const schema = {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: a.titlu,
+            description: a.rezumat,
+            datePublished: a.data,
+            dateModified: a.data,
+            author: { "@type": "Person", name: "Cătălin Cocoș", url: "https://catalincocos.ro/index.html#about" },
+            publisher: { "@type": "Person", name: "Cătălin Cocoș" },
+            mainEntityOfPage: window.location.href,
+            ...(a.imagine ? { image: `https://catalincocos.ro/img/${a.imagine}` } : {}),
+          };
+          const schemaTag = document.createElement("script");
+          schemaTag.type = "application/ld+json";
+          schemaTag.id = "articleSchema";
+          schemaTag.textContent = JSON.stringify(schema);
+          document.head.appendChild(schemaTag);
         })
         .catch(() => {
           document.getElementById("artWrap").innerHTML =

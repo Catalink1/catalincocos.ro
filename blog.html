@@ -39,7 +39,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://catalincocos.ro/img/eu.jpg" />
     <link rel="canonical" href="https://catalincocos.ro/blog.html" />
-    <link rel="stylesheet" href="css/style.css?v=bfcb7f17" />
+    <link rel="stylesheet" href="css/style.css?v=2239af9e" />
     <style>
       .blog-wrap {
         padding-top: var(--nav-h);
@@ -206,9 +206,11 @@
       // Nav
       document.getElementById("hamburger").addEventListener("click", () => {
         document.getElementById("mobileNav").classList.add("open");
+        document.body.classList.add("menu-open");
       });
       document.getElementById("mobileClose").addEventListener("click", () => {
         document.getElementById("mobileNav").classList.remove("open");
+        document.body.classList.remove("menu-open");
       });
 
       // Formatare dată

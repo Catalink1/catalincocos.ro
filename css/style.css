@@ -129,6 +129,7 @@ button { font-family: var(--font-sans); cursor: pointer; }
 .nav-logo em { font-style: italic; color: var(--accent); }
 #nav.on-dark .nav-logo { color: #fff; }
 #nav.on-dark.opaque .nav-logo { color: var(--charcoal); }
+#nav.on-dark:not(.opaque) .nav-logo { visibility: hidden; }
 
 .nav-links {
   display: flex;
@@ -183,7 +184,10 @@ button { font-family: var(--font-sans); cursor: pointer; }
   background: none;
   border: none;
   padding: 4px;
+  color: var(--charcoal);
 }
+#nav.on-dark .hamburger { color: #fff; }
+#nav.on-dark.opaque .hamburger { color: var(--charcoal); }
 .hamburger span {
   width: 26px; height: 1px;
   background: currentColor;
@@ -197,23 +201,27 @@ button { font-family: var(--font-sans); cursor: pointer; }
   position: fixed;
   inset: 0;
   background: var(--charcoal);
-  z-index: 199;
+  z-index: 201;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: safe center;
   gap: 2.5rem;
+  overflow-y: auto;
+  padding: 5rem 2rem 3rem;
 }
 .mobile-nav.open { display: flex; }
+body.menu-open .hamburger { visibility: hidden; }
 .mobile-nav a {
   font-family: var(--font-serif);
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 400;
   color: var(--cream);
   transition: color 0.2s;
+  flex-shrink: 0;
 }
 .mobile-nav a:hover { color: var(--accent-lt); }
 .mobile-close {
-  position: absolute;
+  position: fixed;
   top: 1.5rem; right: 3.5rem;
   background: none; border: none;
   color: var(--stone);
@@ -378,9 +386,20 @@ button { font-family: var(--font-sans); cursor: pointer; }
   transform: translateY(12px);
   animation: fadeUp 0.8s 0.25s forwards;
 }
+.hero-name {
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 1.25rem;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: fadeUp 0.8s 0.35s forwards;
+}
+.hero-name em { font-style: italic; color: var(--accent-lt); }
 .hero-title {
   font-family: var(--font-serif);
-  font-size: clamp(3rem, 8vw, 7rem);
+  font-size: clamp(2.25rem, 6vw, 5rem);
   line-height: 1.05;
   color: #fff;
   margin-bottom: 1.1rem;
@@ -1333,6 +1352,10 @@ button { font-family: var(--font-sans); cursor: pointer; }
   color: #3a6b3a;
   font-size: 0.875rem;
 }
+.f-success a {
+  color: inherit;
+  text-decoration: underline;
+}
 
 /* ════════════════════════════════
    FOOTER
@@ -1432,6 +1455,16 @@ footer {
 /* ════════════════════════════════
    RESPONSIVE
 ════════════════════════════════ */
+/* Meniul text (9 linkuri) nu încape pe un rând sub ~1360px lățime la
+   dimensiunile normale — îl strângem (gap/font/spațiere mai mici) ca să
+   încapă tot pe un rând, în loc să treacă pe meniul hamburger. */
+@media (max-width: 1360px) and (min-width: 1025px) {
+  #nav { padding: 0 1.75rem; }
+  .nav-links { gap: 1.1rem; }
+  .nav-links a { font-size: 0.66rem; letter-spacing: 0.05em; }
+  .nav-links a.nav-btn-3d { padding: 0.4rem 0.8rem; }
+}
+
 @media (max-width: 1024px) {
   #nav { padding: 0 2rem; }
   .nav-links { display: none; }

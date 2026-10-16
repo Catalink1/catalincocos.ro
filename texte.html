@@ -67,7 +67,7 @@
 
     <link rel="canonical" href="https://catalincocos.ro/texte.html" />
 
-    <link rel="stylesheet" href="css/style.css?v=bfcb7f17" />
+    <link rel="stylesheet" href="css/style.css?v=2239af9e" />
     <style>
       /* ══════════════════════════════
        TEXTE PUBLICATE PAGE
@@ -773,9 +773,11 @@
       // Hamburger
       document.getElementById("hamburger").addEventListener("click", () => {
         document.getElementById("mobileNav").classList.add("open");
+        document.body.classList.add("menu-open");
       });
       document.getElementById("mobileClose").addEventListener("click", () => {
         document.getElementById("mobileNav").classList.remove("open");
+        document.body.classList.remove("menu-open");
       });
 
       // Reveal on scroll
