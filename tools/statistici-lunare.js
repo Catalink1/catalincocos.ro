@@ -32,7 +32,11 @@ const end = new Date(today); end.setDate(end.getDate() - 1);            // ieri
 const start3m = new Date(end); start3m.setMonth(start3m.getMonth() - 3); // ultimele 3 luni (ca exportul manual)
 const prevMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
 const prevMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
+const beforeMonthStart = new Date(today.getFullYear(), today.getMonth() - 2, 1); // luna dinaintea lunii trecute,
+const beforeMonthEnd = new Date(today.getFullYear(), today.getMonth() - 1, 0);   // pentru comparația din verdict
 const OUT = path.join(ROOT, "notite", `date-${today.getFullYear()}-${pad(today.getMonth() + 1)}`);
+const LUNI = ["ianuarie", "februarie", "martie", "aprilie", "mai", "iunie", "iulie",
+  "august", "septembrie", "octombrie", "noiembrie", "decembrie"];
 
 /* ── utilitare ── */
 function toCsv(header, rows) {
@@ -47,9 +51,28 @@ function save(name, header, rows) {
   console.log(`  ✓ ${name} (${rows.length} rânduri)`);
 }
 
+/* ── verdict: un rând la început, ca să știi dacă merită să deschizi CSV-urile ── */
+const NIVELURI = { verde: "🟢 Nimic important", galben: "🟡 De urmărit", rosu: "🔴 Uită-te acum" };
+function writeVerdict(level, notes, title = "") {
+  const text = `${NIVELURI[level]}\n\n${title ? title + "\n" : ""}${notes.map((n) => `- ${n}`).join("\n")}\n`;
+  fs.mkdirSync(OUT, { recursive: true });
+  fs.writeFileSync(path.join(OUT, "00-verdict.txt"), "﻿" + text);
+  console.log(`\nVERDICT: ${text}`);
+}
+// Compară luna trecută cu cea dinainte. Sub `minBase` cifrele sunt prea mici ca procentul să însemne ceva.
+function compare(label, now, before, minBase) {
+  const line = `${label}: ${now} (față de ${before})`;
+  if (before < minBase) return { level: "verde", line: `${line}, prea puține ca să comparăm` };
+  const pct = Math.round(((now - before) / before) * 100);
+  const sign = pct > 0 ? "+" : "";
+  const level = pct <= -50 ? "rosu" : Math.abs(pct) >= 30 ? "galben" : "verde";
+  return { level, line: `${line}, ${sign}${pct}%` };
+}
+
 async function main() {
   if (!fs.existsSync(KEY_FILE)) {
     console.error(`Lipsește cheia robotului: ${KEY_FILE}`);
+    writeVerdict("rosu", [`Exportul nu a rulat: lipsește cheia robotului (${KEY_FILE}).`]);
     process.exit(1);
   }
   fs.mkdirSync(OUT, { recursive: true });
@@ -81,6 +104,18 @@ async function main() {
   }
   save("gsc-imagini-pagini.csv", ["Pagini", ...H], gscRows(await gsc("page", "image")));
   save("gsc-imagini-interogari.csv", ["Interogări", ...H], gscRows(await gsc("query", "image")));
+
+  // totaluri pe lună (fără dimensiuni, GSC întoarce un singur rând), pentru verdict
+  const gscTotal = async (s, e) =>
+    ((await post(gscUrl, { startDate: iso(s), endDate: iso(e), type: "web" })).rows || [])[0] ||
+    { clicks: 0, impressions: 0 };
+  const gscNow = await gscTotal(prevMonthStart, prevMonthEnd);
+  const gscBefore = await gscTotal(beforeMonthStart, beforeMonthEnd);
+  const checks = [
+    compare("Clicuri din Google", gscNow.clicks, gscBefore.clicks, 10),
+    compare("Afișări în Google", gscNow.impressions, gscBefore.impressions, 50),
+  ];
+  const extra = [];
 
   /* ── Google Analytics 4 ── */
   if (!/^\d+$/.test(GA_PROPERTY_ID)) {
@@ -114,7 +149,30 @@ async function main() {
       save(`ga-${tag}-surse.csv`, ["Sursă / mediu", ...MH], gaRows(await ga("sessionSourceMedium", M, range)));
       save(`ga-${tag}-pagini-intrare.csv`, ["Pagina de intrare", ...MH], gaRows(await ga("landingPage", M, range)));
     }
+
+    const gaTotals = async (s, e) => {
+      const rows = gaRows(await ga("sessionDefaultChannelGroup", M, { startDate: iso(s), endDate: iso(e) }));
+      return {
+        sessions: rows.reduce((t, r) => t + r[1], 0),
+        organic: rows.filter((r) => r[0] === "Organic Search").reduce((t, r) => t + r[1], 0),
+        keyEvents: rows.reduce((t, r) => t + r[4], 0),
+      };
+    };
+    const gaNow = await gaTotals(prevMonthStart, prevMonthEnd);
+    const gaBefore = await gaTotals(beforeMonthStart, beforeMonthEnd);
+    checks.push(
+      compare("Vizite pe site", gaNow.sessions, gaBefore.sessions, 20),
+      compare("Vizite din căutarea Google", gaNow.organic, gaBefore.organic, 10),
+    );
+    // primul formular trimis sau alt eveniment important: veste bună, dar de văzut de unde a venit
+    if (gaNow.keyEvents > 0) extra.push({ level: "galben", line: `Evenimente importante: ${gaNow.keyEvents} (de văzut în GA de unde au venit)` });
   }
+
+  const all = [...checks, ...extra];
+  const level = all.some((c) => c.level === "rosu") ? "rosu" : all.some((c) => c.level === "galben") ? "galben" : "verde";
+  const lunaNow = LUNI[prevMonthStart.getMonth()];
+  const lunaBefore = LUNI[beforeMonthStart.getMonth()];
+  writeVerdict(level, all.map((c) => c.line), `Luna ${lunaNow}, față de ${lunaBefore}:`);
 
   fs.writeFileSync(path.join(OUT, "_generat.txt"), `Generat: ${new Date().toISOString()}\n`);
   console.log("\nGata.\n");
@@ -123,5 +181,6 @@ async function main() {
 main().catch((err) => {
   const msg = err.response?.data?.error?.message || err.message;
   console.error(`\nEROARE: ${msg}\n`);
+  writeVerdict("rosu", [`Exportul s-a oprit cu o eroare: ${msg}`, "Dacă este o eroare de autorizare, cheia robotului poate fi revocată sau expirată."]);
   process.exit(1);
 });
