@@ -66,11 +66,13 @@ window.addEventListener("scroll", () => {
 // ── Mobile menu ──
 document.getElementById("hamburger").addEventListener("click", () => {
   document.getElementById("mobileNav").classList.add("open");
+  document.body.classList.add("menu-open");
 });
 document.getElementById("mobileClose").addEventListener("click", closeMobile);
 
 function closeMobile() {
   document.getElementById("mobileNav").classList.remove("open");
+  document.body.classList.remove("menu-open");
 }
 
 // ── Gallery filters (masonry for "all", carousel for categories) ──

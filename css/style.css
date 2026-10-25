@@ -1433,6 +1433,15 @@ footer {
   gap: 1rem;
   flex-wrap: wrap;
 }
+.hero-cta-note {
+  margin-top: 0.9rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.75);
+}
+a.btn-accent { text-decoration: none; }
+.about-cta { flex-wrap: wrap; }
+.about-cta .btn-accent { white-space: nowrap; flex-shrink: 0; }
 /* ════════════════════════════════
    ANIMATIONS
 ════════════════════════════════ */

@@ -1,6 +1,6 @@
 # Articole — draft-uri, gata de import în admin
 
-Fiecare articol are propriul folder, numerotat în ordine cronologică, cu slug-ul în nume — `articole/NN-slug-articol/`. Articolele pilon au și `PILON` în nume, ca să se găsească rapid (ex. `01-PILON-...`). Numărul și eticheta sunt doar pentru orientare — la import contează doar `slug:` din frontmatter, nu numele folderului. În folder: `articol.md` (formatul din [`admin/TEMPLATE-articol.md`](../admin/TEMPLATE-articol.md)) + pozele lui, dacă are.
+Fiecare articol are propriul folder, numerotat în ordine cronologică, cu slug-ul în nume — `articole/NN-slug-articol/`. Articolele pilon au și `PILON` în nume, ca să se găsească rapid (ex. `01-PILON-...`). Numărul și eticheta din numele folderului sunt doar pentru orientare — la import contează doar `title:`/`slug` din frontmatter, nu numele folderului sau al fișierului. În folder: `slug-articol.md` — fișierul .md numit după slug-ul real al articolului (nu generic `articol.md`), ca să fie căutabil după nume când sunt multe — în formatul din [`admin/TEMPLATE-articol.md`](../admin/TEMPLATE-articol.md) — + pozele lui, dacă are.
 
 Pentru publicare: deschizi `admin/import-md.php` din panoul de admin, alegi „Alege un folder întreg" și selectezi direct folderul articolului — `.md`-ul și pozele se încarcă împreună.
 

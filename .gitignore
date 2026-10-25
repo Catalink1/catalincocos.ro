@@ -9,3 +9,6 @@ admin/config.php
 .claude/php-server.log
 .claude/php-server-err.log
 notite/
+
+# poze originale (sursa pentru img/), nu se urcă pe site
+Foto/
